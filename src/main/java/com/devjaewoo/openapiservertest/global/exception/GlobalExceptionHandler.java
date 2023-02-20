@@ -29,6 +29,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(CommonErrorCode.INVALID_PARAMETER);
     }
 
+    @ExceptionHandler(OpenApiException.class)
+    public ResponseEntity<Object> handleOpenApiException(OpenApiException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getCode(), e.getMessage(), null));
+    }
+
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
