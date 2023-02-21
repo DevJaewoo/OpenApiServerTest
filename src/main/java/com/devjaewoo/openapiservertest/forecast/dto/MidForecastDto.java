@@ -1,5 +1,6 @@
 package com.devjaewoo.openapiservertest.forecast.dto;
 
+import com.devjaewoo.openapiservertest.forecast.entity.MidForecastData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record MidForecastDto(
@@ -86,4 +87,37 @@ public record MidForecastDto(
 	String wf10
 
 ) implements ForecastItem {
+	
+	public MidForecastData toEntity() {
+		return MidForecastData.builder()
+				.rnSt3Am(rnSt3Am)
+				.rnSt3Am(rnSt3Pm)
+				.rnSt4Am(rnSt4Am)
+				.rnSt4Am(rnSt4Pm)
+				.rnSt5Am(rnSt5Am)
+				.rnSt5Am(rnSt5Pm)
+				.rnSt6Am(rnSt6Am)
+				.rnSt6Am(rnSt6Pm)
+				.rnSt7Am(rnSt7Am)
+				.rnSt7Am(rnSt7Pm)
+				.rnSt8(rnSt8)
+				.rnSt9(rnSt9)
+				.rnSt10(rnSt10)
+
+				.wf3Am(wf3Am)
+				.wf3Am(wf3Pm)
+				.wf4Am(wf4Am)
+				.wf4Am(wf4Pm)
+				.wf5Am(wf5Am)
+				.wf5Am(wf5Pm)
+				.wf6Am(wf6Am)
+				.wf6Am(wf6Pm)
+				.wf7Am(wf7Am)
+				.wf7Am(wf7Pm)
+				.wf8(wf8)
+				.wf9(wf9)
+				.wf10(wf10)
+
+				.build();
+	}
 }

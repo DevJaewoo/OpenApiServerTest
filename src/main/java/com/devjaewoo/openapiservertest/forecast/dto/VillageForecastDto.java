@@ -1,5 +1,6 @@
 package com.devjaewoo.openapiservertest.forecast.dto;
 
+import com.devjaewoo.openapiservertest.forecast.entity.VillageForecastData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record VillageForecastDto(
@@ -29,4 +30,17 @@ public record VillageForecastDto(
 		int ny
 
 ) implements ForecastItem {
+
+	public VillageForecastData toEntity() {
+		return VillageForecastData.builder()
+				.baseDate(baseDate)
+				.baseTime(baseTime)
+				.category(category)
+				.fcstDate(fcstDate)
+				.fcstTime(fcstTime)
+				.fcstValue(fcstValue)
+				.nx(nx)
+				.ny(ny)
+				.build();
+	}
 }
