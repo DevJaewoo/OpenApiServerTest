@@ -1,6 +1,6 @@
 package com.devjaewoo.openapiservertest.forecast.dto;
 
-import com.devjaewoo.openapiservertest.forecast.entity.UltraForecastData;
+import com.devjaewoo.openapiservertest.forecast.entity.UltraForecast;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record UltraForecastDto(
@@ -31,8 +31,8 @@ public record UltraForecastDto(
 
 ) implements ForecastItem {
 
-        public UltraForecastData toEntity() {
-                return UltraForecastData.builder()
+        public UltraForecast toEntity() {
+                return UltraForecast.builder()
                         .baseDate(baseDate)
                         .baseTime(baseTime)
                         .category(category)

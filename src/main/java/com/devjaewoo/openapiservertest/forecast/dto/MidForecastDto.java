@@ -1,6 +1,6 @@
 package com.devjaewoo.openapiservertest.forecast.dto;
 
-import com.devjaewoo.openapiservertest.forecast.entity.MidForecastData;
+import com.devjaewoo.openapiservertest.forecast.entity.MidForecast;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record MidForecastDto(
@@ -88,8 +88,8 @@ public record MidForecastDto(
 
 ) implements ForecastItem {
 	
-	public MidForecastData toEntity() {
-		return MidForecastData.builder()
+	public MidForecast toEntity() {
+		return MidForecast.builder()
 				.rnSt3Am(rnSt3Am)
 				.rnSt3Am(rnSt3Pm)
 				.rnSt4Am(rnSt4Am)
