@@ -27,4 +27,19 @@ public class UltraForecast extends BaseTimeEntity {
     String fcstValue;
     int nx;
     int ny;
+
+    public static UltraForecast create(String baseDate, String baseTime, String category, String fcstDate, String fcstTime, String fcstValue, int nx, int ny) {
+        UltraForecast ultraForecast = new UltraForecast();
+
+        ultraForecast.baseDate = baseDate;
+        ultraForecast.baseTime = baseTime;
+        ultraForecast.category = category;
+        ultraForecast.fcstDate = fcstDate;
+        ultraForecast.fcstTime = fcstTime;
+        ultraForecast.fcstValue = fcstValue;
+        ultraForecast.nx = nx;
+        ultraForecast.ny = ny;
+
+        return ultraForecast;
+    }
 }
