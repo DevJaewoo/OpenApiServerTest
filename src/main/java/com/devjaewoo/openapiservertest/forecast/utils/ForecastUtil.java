@@ -9,10 +9,10 @@ import java.net.URI;
 
 public class ForecastUtil {
 
-    private static final String domain = "http://apis.data.go.kr/1360000";
+    private static final String OPENAPI_DOMAIN = "http://apis.data.go.kr/1360000";
 
     public static URI getMidForecastUri(MidForecastSearch search, String apiKey) {
-        String uri = UriComponentsBuilder.fromHttpUrl(domain + "/MidFcstInfoService/getMidLandFcst")
+        String uri = UriComponentsBuilder.fromHttpUrl(OPENAPI_DOMAIN + "/MidFcstInfoService/getMidLandFcst")
                 .queryParam("dataType", "JSON")
                 .queryParam("pageNo", search.pageNo())
                 .queryParam("numOfRows", search.numOfRows())
@@ -25,7 +25,7 @@ public class ForecastUtil {
     }
 
     public static URI getVillageForecastUri(VillageForecastSearch search, String apiKey) {
-        String uri = UriComponentsBuilder.fromHttpUrl(domain + "/VilageFcstInfoService_2.0/getVilageFcst")
+        String uri = UriComponentsBuilder.fromHttpUrl(OPENAPI_DOMAIN + "/VilageFcstInfoService_2.0/getVilageFcst")
                 .queryParam("dataType", "JSON")
                 .queryParam("pageNo", search.pageNo())
                 .queryParam("numOfRows", search.numOfRows())
@@ -40,7 +40,7 @@ public class ForecastUtil {
     }
 
     public static URI getUltraForecastUri(UltraForecastSearch search, String apiKey) {
-        String uri = UriComponentsBuilder.fromHttpUrl(domain + "/VilageFcstInfoService_2.0/getUltraSrtFcst")
+        String uri = UriComponentsBuilder.fromHttpUrl(OPENAPI_DOMAIN + "/VilageFcstInfoService_2.0/getUltraSrtFcst")
                 .queryParam("dataType", "JSON")
                 .queryParam("pageNo", search.pageNo())
                 .queryParam("numOfRows", search.numOfRows())
