@@ -2,7 +2,9 @@ package com.devjaewoo.openapiservertest.forecast.dto;
 
 import com.devjaewoo.openapiservertest.forecast.entity.UltraForecast;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
+@Builder
 public record UltraForecastDto(
 
         @JsonProperty("baseDate")
@@ -31,16 +33,29 @@ public record UltraForecastDto(
 
 ) implements ForecastItem {
 
-        public UltraForecast toEntity() {
-                return UltraForecast.builder()
-                        .baseDate(baseDate)
-                        .baseTime(baseTime)
-                        .category(category)
-                        .fcstDate(fcstDate)
-                        .fcstTime(fcstTime)
-                        .fcstValue(fcstValue)
-                        .nx(nx)
-                        .ny(ny)
-                        .build();
-        }
+    public UltraForecast toEntity() {
+        return UltraForecast.builder()
+                .baseDate(baseDate)
+                .baseTime(baseTime)
+                .category(category)
+                .fcstDate(fcstDate)
+                .fcstTime(fcstTime)
+                .fcstValue(fcstValue)
+                .nx(nx)
+                .ny(ny)
+                .build();
+    }
+
+    public static UltraForecastDto from(UltraForecast ultraForecast) {
+        return UltraForecastDto.builder()
+                .baseDate(ultraForecast.getBaseDate())
+                .baseTime(ultraForecast.getBaseTime())
+                .category(ultraForecast.getCategory())
+                .fcstDate(ultraForecast.getFcstDate())
+                .fcstTime(ultraForecast.getFcstTime())
+                .fcstValue(ultraForecast.getFcstValue())
+                .nx(ultraForecast.getNx())
+                .ny(ultraForecast.getNy())
+                .build();
+    }
 }

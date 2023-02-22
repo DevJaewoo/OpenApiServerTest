@@ -3,7 +3,9 @@ package com.devjaewoo.openapiservertest.forecast.controller;
 import com.devjaewoo.openapiservertest.forecast.dto.*;
 import com.devjaewoo.openapiservertest.forecast.service.ForecastService;
 import com.devjaewoo.openapiservertest.forecast.service.OpenApiService;
+import com.devjaewoo.openapiservertest.global.dto.PageResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +43,11 @@ public class ForecastController {
         response.data().forEach(forecastService::saveUltraForecast);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/ultra/search")
+    public ResponseEntity<?> searchUltraForecastData(@Valid UltraForecastSearch2 search) {
+        Page<UltraForecastDto> result = forecastService.searchUltraForecast(search);
+        return ResponseEntity.ok(new PageResponseDto<>(result));
     }
 }
