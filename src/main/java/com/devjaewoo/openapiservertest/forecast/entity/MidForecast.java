@@ -18,34 +18,34 @@ public class MidForecast extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    String regId;
-    int rnSt3Am;
-    int rnSt3Pm;
-    int rnSt4Am;
-    int rnSt4Pm;
-    int rnSt5Am;
-    int rnSt5Pm;
-    int rnSt6Am;
-    int rnSt6Pm;
-    int rnSt7Am;
-    int rnSt7Pm;
-    int rnSt8;
-    int rnSt9;
-    int rnSt10;
+    private String regId;
+    private int rnSt3Am;
+    private int rnSt3Pm;
+    private int rnSt4Am;
+    private int rnSt4Pm;
+    private int rnSt5Am;
+    private int rnSt5Pm;
+    private int rnSt6Am;
+    private int rnSt6Pm;
+    private int rnSt7Am;
+    private int rnSt7Pm;
+    private int rnSt8;
+    private int rnSt9;
+    private int rnSt10;
     
-    String wf3Am;
-    String wf3Pm;
-    String wf4Am;
-    String wf4Pm;
-    String wf5Am;
-    String wf5Pm;
-    String wf6Am;
-    String wf6Pm;
-    String wf7Am;
-    String wf7Pm;
-    String wf8;
-    String wf9;
-    String wf10;
+    private String wf3Am;
+    private String wf3Pm;
+    private String wf4Am;
+    private String wf4Pm;
+    private String wf5Am;
+    private String wf5Pm;
+    private String wf6Am;
+    private String wf6Pm;
+    private String wf7Am;
+    private String wf7Pm;
+    private String wf8;
+    private String wf9;
+    private String wf10;
 
     public static MidForecast create(
             String regId,
