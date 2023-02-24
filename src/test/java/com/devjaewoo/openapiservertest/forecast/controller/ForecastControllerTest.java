@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -302,6 +305,50 @@ class ForecastControllerTest {
                     .andExpect(jsonPath("$.code").value(ForecastErrorCode.INVALID_BODY.name()))
                     .andExpect(jsonPath("$.message").value(ForecastErrorCode.INVALID_BODY.message))
                     .andReturn();
+        }
+
+        @Test
+        @DisplayName("검색")
+        public void search() throws Exception {
+            //given
+            int page = 1;
+            int size = 2;
+            int total = 10;
+
+            UltraForecastSearch2 search = new UltraForecastSearch2(page, size, "20230224", "1230", "20230224", "1230", "1", "AAA", 1, 2);
+            String uri = UriComponentsBuilder.fromUriString("/api/forecast/ultra/search")
+                    .queryParam("pageNo", search.pageNo())
+                    .queryParam("numOfRows", search.numOfRows())
+                    .queryParam("baseDate", search.baseDate())
+                    .queryParam("baseTime", search.baseTime())
+                    .queryParam("fcstDate", search.fcstDate())
+                    .queryParam("fcstTime", search.fcstTime())
+                    .queryParam("fcstValue", search.fcstValue())
+                    .queryParam("category", search.category())
+                    .queryParam("nx", search.nx())
+                    .queryParam("ny", search.ny())
+                    .toUriString();
+
+            UltraForecastDto ultraForecastDto1 = new UltraForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+            UltraForecastDto ultraForecastDto2 = new UltraForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+
+            PageRequest pageable = PageRequest.of(page ,size);
+            Page<UltraForecastDto> result = PageableExecutionUtils.getPage(List.of(ultraForecastDto1, ultraForecastDto2), pageable, () -> total);
+
+            given(forecastService.searchUltraForecast(any()))
+                    .willReturn(result);
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("/api/forecast/ultra/search"))
+                    .andExpect(jsonPath("$.totalPages").value(result.getTotalPages()))
+                    .andExpect(jsonPath("$.totalElements").value(result.getTotalElements()))
+                    .andExpect(jsonPath("$.content.length()").value(2))
+                    .andReturn();
+
         }
     }
 }
