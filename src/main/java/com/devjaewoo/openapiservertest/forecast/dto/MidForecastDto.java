@@ -90,6 +90,8 @@ public record MidForecastDto(
 
     public MidForecast toEntity() {
         return MidForecast.builder()
+                .regId(regId)
+
                 .rnSt3Am(rnSt3Am)
                 .rnSt3Am(rnSt3Pm)
                 .rnSt4Am(rnSt4Am)
