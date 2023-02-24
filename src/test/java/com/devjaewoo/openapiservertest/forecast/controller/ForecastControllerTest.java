@@ -1,10 +1,10 @@
 package com.devjaewoo.openapiservertest.forecast.controller;
 
-import com.devjaewoo.openapiservertest.forecast.dto.ForecastResponse;
-import com.devjaewoo.openapiservertest.forecast.dto.MidForecastDto;
-import com.devjaewoo.openapiservertest.forecast.dto.MidForecastSearch;
+import com.devjaewoo.openapiservertest.forecast.dto.*;
 import com.devjaewoo.openapiservertest.forecast.service.ForecastService;
 import com.devjaewoo.openapiservertest.forecast.service.OpenApiService;
+import com.devjaewoo.openapiservertest.global.exception.OpenApiException;
+import com.devjaewoo.openapiservertest.global.exception.RestApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,17 +41,21 @@ class ForecastControllerTest {
     @Nested
     @DisplayName("중기 예보 API")
     class GetMidForecastData {
-
-        @Test
-        void success() throws Exception {
-            // given
-            MidForecastSearch search = new MidForecastSearch(1, 1, "12345678", "202302241230");
-            String uri = UriComponentsBuilder.fromUriString("/api/forecast/mid")
+        private String getUri(MidForecastSearch search) {
+            return UriComponentsBuilder.fromUriString("/api/forecast/mid")
                     .queryParam("pageNo", search.pageNo())
                     .queryParam("numOfRows", search.numOfRows())
                     .queryParam("regId", search.regId())
                     .queryParam("tmFc", search.tmFc())
                     .toUriString();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() throws Exception {
+            // given
+            MidForecastSearch search = new MidForecastSearch(1, 1, "12345678", "202302241230");
+            String uri = getUri(search);
 
             MidForecastDto midForecastDto1 = new MidForecastDto(
                     "regId", 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100,
@@ -73,9 +77,230 @@ class ForecastControllerTest {
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andDo(document("/api/forecast/mid"))
-                    .andExpect(jsonPath("$.page", search.pageNo()).exists())
-                    .andExpect(jsonPath("$.numOfRows", search.numOfRows()).exists())
+                    .andExpect(jsonPath("$.page").value(search.pageNo()))
+                    .andExpect(jsonPath("$.numOfRows").value(search.numOfRows()))
                     .andExpect(jsonPath("$.data.length()").value(2))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("Open API 응답 오류")
+        void openApiException() throws Exception {
+            // given
+            MidForecastSearch search = new MidForecastSearch(1, 1, "12345678", "202302241230");
+            String uri = getUri(search);
+
+            String code = "01";
+            String message = "APPLICATION_ERROR";
+
+            given(openApiService.requestMidForecastData(any()))
+                    .willThrow(new OpenApiException(code, message));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/mid"))
+                    .andExpect(jsonPath("$.code").value(code))
+                    .andExpect(jsonPath("$.message").value(message))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("비어있는 데이터 반환")
+        void noContent() throws Exception {
+            // given
+            MidForecastSearch search = new MidForecastSearch(1, 1, "12345678", "202302241230");
+            String uri = getUri(search);
+
+            given(openApiService.requestMidForecastData(any()))
+                    .willThrow(new RestApiException(ForecastErrorCode.INVALID_BODY));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/mid"))
+                    .andExpect(jsonPath("$.code").value(ForecastErrorCode.INVALID_BODY.name()))
+                    .andExpect(jsonPath("$.message").value(ForecastErrorCode.INVALID_BODY.message))
+                    .andReturn();
+        }
+    }
+
+    @Nested
+    @DisplayName("단기 예보 API")
+    class GetVillageForecastData {
+
+        private String getUri(VillageForecastSearch search) {
+            return UriComponentsBuilder.fromUriString("/api/forecast/village")
+                    .queryParam("pageNo", search.pageNo())
+                    .queryParam("numOfRows", search.numOfRows())
+                    .queryParam("baseDate", search.baseDate())
+                    .queryParam("baseTime", search.baseTime())
+                    .queryParam("nx", search.nx())
+                    .queryParam("ny", search.ny())
+                    .toUriString();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() throws Exception {
+            // given
+            VillageForecastSearch search = new VillageForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            VillageForecastDto villageForecastDto1 = new VillageForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+            VillageForecastDto villageForecastDto2 = new VillageForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+
+            ForecastResponse<VillageForecastDto> response = new ForecastResponse<>(1, 1, 2, List.of(villageForecastDto1, villageForecastDto2));
+
+            given(openApiService.requestVillageForecastData(any()))
+                    .willReturn(response);
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("/api/forecast/village"))
+                    .andExpect(jsonPath("$.page").value(search.pageNo()))
+                    .andExpect(jsonPath("$.numOfRows").value(search.numOfRows()))
+                    .andExpect(jsonPath("$.data.length()").value(2))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("Open API 응답 오류")
+        void openApiException() throws Exception {
+            // given
+            VillageForecastSearch search = new VillageForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            String code = "01";
+            String message = "APPLICATION_ERROR";
+
+            given(openApiService.requestVillageForecastData(any()))
+                    .willThrow(new OpenApiException(code, message));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/village"))
+                    .andExpect(jsonPath("$.code").value(code))
+                    .andExpect(jsonPath("$.message").value(message))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("비어있는 데이터 반환")
+        void noContent() throws Exception {
+            // given
+            VillageForecastSearch search = new VillageForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            given(openApiService.requestVillageForecastData(any()))
+                    .willThrow(new RestApiException(ForecastErrorCode.INVALID_BODY));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/village"))
+                    .andExpect(jsonPath("$.code").value(ForecastErrorCode.INVALID_BODY.name()))
+                    .andExpect(jsonPath("$.message").value(ForecastErrorCode.INVALID_BODY.message))
+                    .andReturn();
+        }
+    }
+    
+    @Nested
+    @DisplayName("단기 예보 API")
+    class GetUltraForecastData {
+
+        private String getUri(UltraForecastSearch search) {
+            return UriComponentsBuilder.fromUriString("/api/forecast/ultra")
+                    .queryParam("pageNo", search.pageNo())
+                    .queryParam("numOfRows", search.numOfRows())
+                    .queryParam("baseDate", search.baseDate())
+                    .queryParam("baseTime", search.baseTime())
+                    .queryParam("nx", search.nx())
+                    .queryParam("ny", search.ny())
+                    .toUriString();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() throws Exception {
+            // given
+            UltraForecastSearch search = new UltraForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            UltraForecastDto ultraForecastDto1 = new UltraForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+            UltraForecastDto ultraForecastDto2 = new UltraForecastDto("20230224", "1230", "AAA", "20230224", "1300", "1", 1, 2);
+
+            ForecastResponse<UltraForecastDto> response = new ForecastResponse<>(1, 1, 2, List.of(ultraForecastDto1, ultraForecastDto2));
+
+            given(openApiService.requestUltraForecastData(any()))
+                    .willReturn(response);
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("/api/forecast/ultra"))
+                    .andExpect(jsonPath("$.page").value(search.pageNo()))
+                    .andExpect(jsonPath("$.numOfRows").value(search.numOfRows()))
+                    .andExpect(jsonPath("$.data.length()").value(2))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("Open API 응답 오류")
+        void openApiException() throws Exception {
+            // given
+            UltraForecastSearch search = new UltraForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            String code = "01";
+            String message = "APPLICATION_ERROR";
+
+            given(openApiService.requestUltraForecastData(any()))
+                    .willThrow(new OpenApiException(code, message));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/ultra"))
+                    .andExpect(jsonPath("$.code").value(code))
+                    .andExpect(jsonPath("$.message").value(message))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("비어있는 데이터 반환")
+        void noContent() throws Exception {
+            // given
+            UltraForecastSearch search = new UltraForecastSearch(1, 1, "20230224", "1230", 1, 2);
+            String uri = getUri(search);
+
+            given(openApiService.requestUltraForecastData(any()))
+                    .willThrow(new RestApiException(ForecastErrorCode.INVALID_BODY));
+
+            // when
+            // then
+            mockMvc.perform(get(uri))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("/api/forecast/ultra"))
+                    .andExpect(jsonPath("$.code").value(ForecastErrorCode.INVALID_BODY.name()))
+                    .andExpect(jsonPath("$.message").value(ForecastErrorCode.INVALID_BODY.message))
                     .andReturn();
         }
     }
