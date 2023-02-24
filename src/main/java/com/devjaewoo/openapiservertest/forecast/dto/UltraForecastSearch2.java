@@ -17,6 +17,7 @@ public record UltraForecastSearch2(
 
         @Pattern(regexp = "\\d{4}", message = "Date must be in HHmm format")
         String baseTime,
+        String category,
 
         @Pattern(regexp = "\\d{8}", message = "Date must be in yyyyMMdd format")
         String fcstDate,
@@ -25,7 +26,6 @@ public record UltraForecastSearch2(
         String fcstTime,
 
         String fcstValue,
-        String category,
 
         @Min(1)
         Integer nx,
