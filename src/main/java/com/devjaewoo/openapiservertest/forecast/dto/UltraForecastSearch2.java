@@ -7,10 +7,10 @@ import javax.validation.constraints.Pattern;
 public record UltraForecastSearch2(
 
         @Min(1)
-        int page,
+        int pageNo,
 
         @Min(1)
-        int size,
+        int numOfRows,
 
         @Pattern(regexp = "\\d{8}", message = "Date must be in yyyyMMdd format")
         String baseDate,

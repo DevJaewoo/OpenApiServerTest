@@ -23,7 +23,7 @@ public class UltraForecastRepositoryImpl implements UltraForecastRepositoryCusto
 
     @Override
     public Page<UltraForecast> search(UltraForecastSearch2 search) {
-        PageRequest pageable = PageRequest.of(search.page(), search.size());
+        PageRequest pageable = PageRequest.of(search.pageNo() - 1, search.numOfRows());
 
         List<UltraForecast> content = queryFactory
                 .selectFrom(ultraForecast)
