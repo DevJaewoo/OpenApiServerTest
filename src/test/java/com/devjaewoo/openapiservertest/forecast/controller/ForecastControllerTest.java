@@ -315,7 +315,7 @@ class ForecastControllerTest {
             int size = 2;
             int total = 10;
 
-            UltraForecastSearch2 search = new UltraForecastSearch2(page, size, "20230224", "1230", "20230224", "1230", "1", "AAA", 1, 2);
+            UltraForecastSearch2 search = new UltraForecastSearch2(page, size, "20230224", "1230", "AAA", "20230224", "1230", "1", 1, 2);
             String uri = UriComponentsBuilder.fromUriString("/api/forecast/ultra/search")
                     .queryParam("pageNo", search.pageNo())
                     .queryParam("numOfRows", search.numOfRows())
