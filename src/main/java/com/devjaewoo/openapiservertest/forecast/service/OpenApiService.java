@@ -2,7 +2,6 @@ package com.devjaewoo.openapiservertest.forecast.service;
 
 import com.devjaewoo.openapiservertest.forecast.dto.*;
 import com.devjaewoo.openapiservertest.forecast.utils.ForecastUtil;
-import com.devjaewoo.openapiservertest.global.exception.OpenApiException;
 import com.devjaewoo.openapiservertest.global.exception.RestApiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import static com.devjaewoo.openapiservertest.forecast.utils.OpenApiResponseValidator.validateResponse;
 
 
 @Slf4j
@@ -24,24 +25,6 @@ public class OpenApiService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-
-    private void validateHeader(OpenApiResponse.Response.Header header) {
-        if(!header.resultCode().equals("00")) {
-            throw new OpenApiException(header.resultCode(), header.resultMsg());
-        }
-    }
-
-    private void validateBody(OpenApiResponse.Response.Body<?> body) {
-        if(body == null) {
-            throw new RestApiException(ForecastErrorCode.INVALID_BODY);
-        }
-    }
-
-    private <T extends ForecastItem> OpenApiResponse.Response.Body<T> validateResponse(OpenApiResponse<T> response) {
-        validateHeader(response.response().header());
-        validateBody(response.response().body());
-        return response.response().body();
-    }
 
     public ForecastResponse<MidForecastDto> requestMidForecastData(MidForecastSearch search) {
         String response = restTemplate.getForObject(ForecastUtil.getMidForecastUri(search, apiKey), String.class);
